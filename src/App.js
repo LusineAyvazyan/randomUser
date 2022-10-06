@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import User from "./User";
+import "./styles.css";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-function App() {
+// https://randomuser.me/api
+
+export default function App() {
+  const [picture, setPicture] = useState(null);
+  const [name, setName] = useState(null);
+
+  const getNewUser = () => {
+    axios.get('https://randomuser.me/api')
+      .then((response)=> {
+        if (response.data) {
+          //in this case i wrote by getting array 0 element, 
+          //but in other case, if data will be big, 
+          //of course I will wrote by maping, or depending on case smth else
+          setName(response.data.results[0].name);
+          setPicture(response.data.results[0].picture)
+        }
+      })
+      .catch((error) => {
+        console.log(error, "error");
+      })
+  };
+
+  useEffect(()=> {
+    getNewUser()
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <User getUser={()=> getNewUser()} userName={name} userPic={picture}/>
     </div>
   );
 }
-
-export default App;
